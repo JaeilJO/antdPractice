@@ -7,7 +7,7 @@ const items = [
   { title: "footer", key: 3, href: "#footer" },
 ];
 
-const Div = styled.section`
+const Section = styled.section`
   height: 1000px;
   width: 100%;
 `;
@@ -19,15 +19,15 @@ const Anchorpage = () => {
         <Anchor items={items} />
       </nav>
       <main style={{ position: "absolute", marginTop: `50px`, width: "100%" }}>
-        <Div id={"home"} style={{ backgroundColor: "cadetblue" }}>
+        <Section id={"home"} style={{ backgroundColor: "cadetblue" }}>
           home
-        </Div>
-        <Div id={"main"} style={{ backgroundColor: "sienna" }}>
+        </Section>
+        <Section id={"main"} style={{ backgroundColor: "sienna" }}>
           main
-        </Div>
-        <Div id={"footer"} style={{ backgroundColor: "snow" }}>
+        </Section>
+        <Section id={"footer"} style={{ backgroundColor: "snow" }}>
           footer
-        </Div>
+        </Section>
       </main>
     </>
   );

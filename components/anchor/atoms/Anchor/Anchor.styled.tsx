@@ -4,6 +4,17 @@ interface UlProps {
   direction?: string;
 }
 
+interface LiProps {
+  isVisible?: string;
+  title: string;
+}
+
+interface MarkerProps {
+  width: number;
+  x: number;
+  isVisible?: string;
+}
+
 export const Ul = styled.ul<UlProps>`
   display: flex;
   flex-direction: ${(props) => (props ? props.direction : `row`)};
@@ -12,7 +23,7 @@ export const Ul = styled.ul<UlProps>`
   height: 50px;
 `;
 
-export const Li = styled.li`
+export const Li = styled.li<LiProps>`
   position: relative;
   margin: 5px;
   width: 100px;
@@ -23,7 +34,7 @@ export const Li = styled.li`
   color: ${(props) => (props.isVisible === props.title ? `blue` : `black`)};
 `;
 
-export const Marker = styled.div`
+export const Marker = styled.div<MarkerProps>`
   content: "";
   height: 3px;
   background-color: blue;
