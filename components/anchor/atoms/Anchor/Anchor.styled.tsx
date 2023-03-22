@@ -1,46 +1,45 @@
 import styled from "styled-components";
 
-interface UlProps {
-  direction?: string;
-}
-
-interface LiProps {
-  isVisible?: string;
-  title: string;
-}
-
-interface MarkerProps {
-  width: number;
-  x: number;
-  isVisible?: string;
-}
-
-export const Ul = styled.ul<UlProps>`
-  display: flex;
-  flex-direction: ${(props) => (props ? props.direction : `row`)};
-  background-color: coral;
+export const AnchorNav = styled.nav`
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  position: fixed;
   width: 100%;
+  display: flex;
+  justify-content: right;
   height: 50px;
+  background-color: white;
+  z-index: 3;
 `;
 
-export const Li = styled.li<LiProps>`
-  position: relative;
-  margin: 5px;
+export const AnchorUl = styled.ul`
+  display: flex;
+  margin-right: 30px;
+`;
+
+export const AnchorLi = styled.li`
   width: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1rem;
-  color: ${(props) => (props.isVisible === props.title ? `blue` : `black`)};
+  margin: 0 10px 0 10px;
 `;
 
-export const Marker = styled.div<MarkerProps>`
-  content: "";
-  height: 3px;
-  background-color: blue;
-  left: ${(props) => props.x}px;
+type Coordinate = {
+  x: number;
+  width: number;
+};
+
+interface MakerProps {
+  markerCoordinate: Coordinate;
+}
+
+export const Marker = styled.div<MakerProps>`
+  background-color: skyblue;
+  width: ${(props) => props.markerCoordinate.width}px;
+  left: ${(props) => props.markerCoordinate.x}px;
   position: absolute;
-  width: ${(props) => props.width}px;
-  transition: 0.2s;
+  content: "";
+  height: 5px;
   bottom: 0;
+  transition: 0.2s;
 `;

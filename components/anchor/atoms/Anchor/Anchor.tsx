@@ -1,43 +1,50 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Li, Marker, Ul } from "./Anchor.styled";
+import { AnchorLi, AnchorNav, AnchorUl, Marker } from "./Anchor.styled";
 
 interface Item {
   key: number;
   title: string;
-  href: string;
 }
-
 interface AnchorProps {
   items: Item[];
-  direction?: "column" | "row";
 }
 
-const Anchor = ({ items, direction }: AnchorProps) => {
-  const [isVisible, setIsVisible] = useState<string>();
-  const [markers, setMarker] = useState({ width: 0, x: 0 });
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const liRefs = useRef<(HTMLLIElement | null)[]>([]);
+const Anchor = ({ items }: AnchorProps) => {
+  const [markerCoordinate, setMarkerCoordinate] = useState<{
+    width: number;
+    x: number;
+  }>({
+    width: 0,
+    x: 0,
+  });
 
-  const handleScroll = useCallback(() => {
-    let current = "";
+  const handleClick = (id: string) => {
+    const section = document.querySelector(`#${id}`);
+    if (section) {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: sectionTop, behavior: "smooth" });
+    }
+  };
+
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+  const anchorLiRefs = useRef([]);
+  const scrollHandle = useCallback(() => {
+    let current: string | undefined = "";
+
     sectionRefs.current.forEach((section, index) => {
       if (!section) return;
-      const sectionTop = window.scrollY + section.getBoundingClientRect().top;
+      const sectionTop = section?.getBoundingClientRect().top + window.scrollY;
 
-      if (
-        window.scrollY + section.getBoundingClientRect().height / 1.5 >=
-        sectionTop
-      ) {
-        current = section.getAttribute("id") || "";
-        setIsVisible(current);
+      if (window.scrollY >= sectionTop && current != section?.id) {
+        current = section?.id;
       }
 
-      if (liRefs.current[index]) {
-        const href = liRefs.current[index]?.title;
-        if (href === current) {
-          setMarker({
-            width: liRefs.current[index]?.getBoundingClientRect().width || 0,
-            x: liRefs.current[index]?.getBoundingClientRect().x || 0,
+      if (anchorLiRefs.current[index]) {
+        const currentLi = anchorLiRefs.current[index]?.title;
+        if (currentLi === current) {
+          setMarkerCoordinate({
+            width: anchorLiRefs.current[index]?.getBoundingClientRect().width,
+            x: anchorLiRefs.current[index]?.getBoundingClientRect().x,
           });
         }
       }
@@ -45,31 +52,35 @@ const Anchor = ({ items, direction }: AnchorProps) => {
   }, []);
 
   useEffect(() => {
-    sectionRefs.current = items.map(
-      (item) => document.querySelector(`#${item.title}`) as HTMLDivElement
+    sectionRefs.current = items.map((item) =>
+        document.querySelector(`#${item.title}`)
     );
-    liRefs.current = items.map(() => null);
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", scrollHandle);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", scrollHandle);
     };
   }, []);
 
   return (
-    <Ul direction={direction}>
-      {items.map((item, index) => (
-        <Li
-          title={item.title}
-          key={item.key}
-          isVisible={isVisible}
-          ref={(element) => (liRefs.current[index] = element)}
-        >
-          <a href={item.href}>{item.title}</a>
-        </Li>
-      ))}
-      <Marker isVisible={isVisible} width={markers.width} x={markers.x} />
-    </Ul>
+      <AnchorNav>
+        <AnchorUl>
+          {items.map((item, index) => (
+              <AnchorLi
+                  key={item.title}
+                  ref={(element) => {
+                    anchorLiRefs.current[index] = element;
+                  }}
+                  title={item.title}
+                  onClick={() => handleClick(item.title)}
+              >
+                <a style={{ cursor: "pointer" }}>{item.title}</a>
+              </AnchorLi>
+          ))}
+        </AnchorUl>
+        <Marker markerCoordinate={markerCoordinate} />
+      </AnchorNav>
   );
 };
 
